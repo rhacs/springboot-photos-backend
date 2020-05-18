@@ -1,11 +1,18 @@
 package cl.rhacs.springboot.photos.controllers;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,9 +20,11 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import cl.rhacs.springboot.photos.exceptions.ContentNotFoundException;
 import cl.rhacs.springboot.photos.exceptions.PhotoNotFoundException;
 import cl.rhacs.springboot.photos.models.Photo;
 import cl.rhacs.springboot.photos.repositories.PhotoRepository;
@@ -34,14 +43,43 @@ public class PhotoController {
     // -----------------------------------------------------------------------------------------
 
     /**
-     * Shows a list of {@link Photo}s stored in the database
+     * Shows a list of {@link Photo}s stored in the database, but paginated :O
      *
-     * @return All instances of the type photo
+     * @param page the solicited page
+     * @param size the number of items per page
+     *
+     * @return All the instances of the type photo, but paginated
+     *
+     * @throws ContentNotFoundException  when the repository is empty
+     * @throws IndexOutOfBoundsException when the user enters a page value larger
+     *                                   than the max value
      */
-    @GetMapping(path = "/")
+    @GetMapping
     @ResponseStatus(code = HttpStatus.OK)
-    public ResponseEntity<List<Photo>> findAllPhotos() {
-        return new ResponseEntity<>(photoRepository.findAll(), HttpStatus.OK);
+    public ResponseEntity<Map<String, Object>> getAllPhotos(@RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) throws ContentNotFoundException, IndexOutOfBoundsException {
+        List<Photo> photos = new ArrayList<>();
+        Pageable pageable = PageRequest.of(page, size);
+
+        Page<Photo> pagePhotos = photoRepository.findAll(pageable);
+        photos = pagePhotos.getContent();
+
+        if (page > pagePhotos.getTotalPages() - 1) {
+            throw new IndexOutOfBoundsException(
+                    String.format("Page value out of bounds, max page = %d", pagePhotos.getTotalPages() - 1));
+        }
+
+        if (photos.isEmpty()) {
+            throw new ContentNotFoundException("The repository is empty");
+        }
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("photos", photos);
+        response.put("currentPage", pagePhotos.getNumber());
+        response.put("totalItems", pagePhotos.getTotalElements());
+        response.put("totalPages", pagePhotos.getTotalPages());
+
+        return new ResponseEntity<>(response, new HttpHeaders(), HttpStatus.OK);
     }
 
     /**
@@ -59,7 +97,7 @@ public class PhotoController {
             throw new PhotoNotFoundException(String.format("Photo with id %d was not found", id));
         }
 
-        return new ResponseEntity<>(photo.get(), HttpStatus.OK);
+        return new ResponseEntity<>(photo.get(), new HttpHeaders(), HttpStatus.OK);
     }
 
     // Post Mappings
@@ -71,14 +109,19 @@ public class PhotoController {
      * @param photo the photo to add
      * @return the saved photo
      */
-    @PostMapping(path = "/")
+    @PostMapping
     @ResponseStatus(code = HttpStatus.CREATED)
     public ResponseEntity<Photo> addPhoto(@RequestBody @Valid final Photo photo) {
         final Photo savedPhoto = photoRepository.save(photo);
-        return new ResponseEntity<>(savedPhoto, HttpStatus.CREATED);
+        return new ResponseEntity<>(savedPhoto, new HttpHeaders(), HttpStatus.CREATED);
     }
 
     // Put Mappings
+    // -----------------------------------------------------------------------------------------
+
+    // TODO
+
+    // Patch Mappings
     // -----------------------------------------------------------------------------------------
 
     // TODO
