@@ -28,7 +28,44 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     public ResponseEntity<ErrorResponse> handlePhotoNotFoundException(final PhotoNotFoundException exception,
             final WebRequest request) {
         final ErrorResponse response = new ErrorResponse(HttpStatus.NOT_FOUND, exception);
-        return new ResponseEntity<>(response, response.getHttpStatus());
+
+        return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+    }
+
+    /**
+     * Handles the {@link ContentNotFoundException} when the repository is empty
+     *
+     * @param exception ContentNotFoundException
+     * @param request   WebRequest
+     * @return ResponseEntity
+     */
+    @ExceptionHandler(value = { ContentNotFoundException.class })
+    @ResponseStatus(code = HttpStatus.NO_CONTENT)
+    public ResponseEntity<ErrorResponse> handleContentNotFoundException(final ContentNotFoundException exception,
+            final WebRequest request) {
+        return new ResponseEntity<>(new ErrorResponse(HttpStatus.NO_CONTENT, exception), HttpStatus.NO_CONTENT);
+    }
+
+    /**
+     * Handles the {@link IndexOutOfBoundsException}
+     *
+     * @param exception IndexOutOfBoundsException
+     * @param request   WebRequest
+     * @return ResponseEntity
+     */
+    @ExceptionHandler(value = { IndexOutOfBoundsException.class })
+    @ResponseStatus(code = HttpStatus.BAD_REQUEST)
+    public ResponseEntity<ErrorResponse> handleIndexOutOfBoundsException(final IndexOutOfBoundsException exception,
+            final WebRequest request) {
+        return new ResponseEntity<>(new ErrorResponse(HttpStatus.BAD_REQUEST, exception), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(value = { IllegalArgumentException.class })
+    @ResponseStatus(code = HttpStatus.BAD_REQUEST)
+    public ResponseEntity<ErrorResponse> handleIllegalArgumentException(final IllegalArgumentException exception,
+            final WebRequest request) {
+        final ErrorResponse response = new ErrorResponse(HttpStatus.BAD_REQUEST, exception);
+        return new ResponseEntity<>(response, new HttpHeaders(), HttpStatus.BAD_REQUEST);
     }
 
     /**
