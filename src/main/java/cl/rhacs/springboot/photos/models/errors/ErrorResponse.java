@@ -6,11 +6,14 @@ import java.util.Set;
 
 import javax.validation.ConstraintViolation;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+
 import org.hibernate.validator.internal.engine.path.PathImpl;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;
 
+@JsonInclude(content = JsonInclude.Include.NON_EMPTY)
 public class ErrorResponse {
 
     // Attributes

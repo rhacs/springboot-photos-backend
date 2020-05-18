@@ -1,5 +1,8 @@
 package cl.rhacs.springboot.photos.models.errors;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+
+@JsonInclude(content = JsonInclude.Include.NON_EMPTY)
 public class DetailedError {
 
     // Attributes
