@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import cl.rhacs.springboot.photos.exceptions.PhotoNotFoundException;
@@ -38,6 +39,7 @@ public class PhotoController {
      * @return All instances of the type photo
      */
     @GetMapping(path = "/")
+    @ResponseStatus(code = HttpStatus.OK)
     public ResponseEntity<List<Photo>> findAllPhotos() {
         return new ResponseEntity<>(photoRepository.findAll(), HttpStatus.OK);
     }
@@ -70,9 +72,10 @@ public class PhotoController {
      * @return the saved photo
      */
     @PostMapping(path = "/")
+    @ResponseStatus(code = HttpStatus.CREATED)
     public ResponseEntity<Photo> addPhoto(@RequestBody @Valid final Photo photo) {
         final Photo savedPhoto = photoRepository.save(photo);
-        return new ResponseEntity<>(savedPhoto, HttpStatus.OK);
+        return new ResponseEntity<>(savedPhoto, HttpStatus.CREATED);
     }
 
     // Put Mappings
