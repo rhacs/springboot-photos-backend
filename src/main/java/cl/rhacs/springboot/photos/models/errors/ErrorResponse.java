@@ -19,11 +19,11 @@ public class ErrorResponse {
     // Attributes
     // -----------------------------------------------------------------------------------------
 
-    private Date timestamp;
+    private final Date timestamp;
     private HttpStatus httpStatus;
     private int httpStatusCode;
     private String message;
-    private Set<DetailedError> detailedErrors;
+    private final Set<DetailedError> detailedErrors;
 
     // Constructors
     // -----------------------------------------------------------------------------------------
@@ -74,16 +74,16 @@ public class ErrorResponse {
         detailedErrors.add(new DetailedError(field, message, objectName, rejectedValue));
     }
 
-    public void addError(FieldError fieldError) {
+    public void addError(final FieldError fieldError) {
         addError(fieldError.getField(), fieldError.getDefaultMessage(), fieldError.getObjectName(),
                 fieldError.getRejectedValue());
     }
 
-    public void addError(ObjectError objectError) {
+    public void addError(final ObjectError objectError) {
         addError(objectError.getObjectName(), objectError.getDefaultMessage());
     }
 
-    public void addError(ConstraintViolation<?> violation) {
+    public void addError(final ConstraintViolation<?> violation) {
         addError(violation.getRootBeanClass().getSimpleName(),
                 ((PathImpl) violation.getPropertyPath()).getLeafNode().asString(), violation.getMessage(),
                 violation.getInvalidValue());
@@ -133,21 +133,21 @@ public class ErrorResponse {
     /**
      * @param httpStatus the httpStatus to set
      */
-    public void setHttpStatus(HttpStatus httpStatus) {
+    public void setHttpStatus(final HttpStatus httpStatus) {
         this.httpStatus = httpStatus;
     }
 
     /**
      * @param httpStatusCode the httpStatusCode to set
      */
-    public void setHttpStatusCode(int httpStatusCode) {
+    public void setHttpStatusCode(final int httpStatusCode) {
         this.httpStatusCode = httpStatusCode;
     }
 
     /**
      * @param message the message to set
      */
-    public void setMessage(String message) {
+    public void setMessage(final String message) {
         this.message = message;
     }
 

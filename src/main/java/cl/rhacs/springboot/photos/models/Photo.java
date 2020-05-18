@@ -158,8 +158,8 @@ public class Photo {
     }
 
     @Override
-    public boolean equals(Object obj) {
-        Photo other = (Photo) obj;
+    public boolean equals(final Object obj) {
+        final Photo other = (Photo) obj;
 
         if (this == obj)
             return true;

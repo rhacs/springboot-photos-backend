@@ -52,8 +52,8 @@ public class PhotoController {
      * @throws PhotoNotFoundException when the photo does not exists
      */
     @GetMapping(path = "/{id:^\\d+$}")
-    public ResponseEntity<Photo> findPhotoById(@PathVariable Long id) throws PhotoNotFoundException {
-        Optional<Photo> photo = photoRepository.findById(id);
+    public ResponseEntity<Photo> findPhotoById(@PathVariable final Long id) throws PhotoNotFoundException {
+        final Optional<Photo> photo = photoRepository.findById(id);
 
         if (!photo.isPresent()) {
             throw new PhotoNotFoundException(String.format("Photo with id %d was not found", id));

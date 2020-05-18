@@ -25,8 +25,8 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
      */
     @ExceptionHandler(value = { PhotoNotFoundException.class })
     @ResponseStatus(code = HttpStatus.NOT_FOUND)
-    public ResponseEntity<ErrorResponse> handlePhotoNotFoundException(PhotoNotFoundException exception,
-            WebRequest request) {
+    public ResponseEntity<ErrorResponse> handlePhotoNotFoundException(final PhotoNotFoundException exception,
+            final WebRequest request) {
         final ErrorResponse response = new ErrorResponse(HttpStatus.NOT_FOUND, exception);
         return new ResponseEntity<>(response, response.getHttpStatus());
     }
@@ -43,8 +43,8 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
      */
     @Override
     @ResponseStatus(code = HttpStatus.BAD_REQUEST)
-    protected ResponseEntity<Object> handleNoHandlerFoundException(NoHandlerFoundException exception,
-            HttpHeaders headers, HttpStatus status, WebRequest request) {
+    protected ResponseEntity<Object> handleNoHandlerFoundException(final NoHandlerFoundException exception,
+            final HttpHeaders headers, final HttpStatus status, final WebRequest request) {
         final ErrorResponse response = new ErrorResponse(HttpStatus.BAD_REQUEST);
         response.setMessage(String.format("Could not find the method %s for the URL %s", exception.getHttpMethod(),
                 exception.getRequestURL()));
