@@ -2,16 +2,21 @@ package cl.rhacs.springboot.photos.models;
 
 import java.util.Date;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import org.hibernate.annotations.CreationTimestamp;
@@ -49,6 +54,12 @@ public class Photo {
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     @Column(columnDefinition = "bigint default 0", name = "views")
     private Long views;
+
+    @JsonIgnore
+    @ManyToOne(cascade = { CascadeType.MERGE, CascadeType.PERSIST,
+            CascadeType.REFRESH }, fetch = FetchType.LAZY, targetEntity = User.class)
+    @JoinColumn(name = "user_id", nullable = false, referencedColumnName = "user_id", updatable = false)
+    private User user;
 
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     @CreationTimestamp
@@ -120,6 +131,13 @@ public class Photo {
      */
     public Long getViews() {
         return views;
+    }
+
+    /**
+     * @return the user
+     */
+    public User getUser() {
+        return user;
     }
 
     /**
