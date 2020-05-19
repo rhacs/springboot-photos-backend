@@ -7,7 +7,11 @@ A small backend implementation of a Photo repository (ig like) made as a way to 
 Planned for the not so near future
 
 - [ ] Add Tests
-- [ ] Implement models: User, Comments, ...
-- [ ] Improve models: Photo
+- [ ] Implement models: ~~User~~, Comments, ...
+- [ ] Improve models: Photo, User
 - [ ] Implement Security
 - [ ] Implement i18n
+
+```
+k-ty-byeee
+```
