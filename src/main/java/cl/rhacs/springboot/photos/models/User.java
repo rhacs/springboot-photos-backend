@@ -16,6 +16,7 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -38,6 +39,7 @@ public class User {
     @NotBlank
     @NotEmpty
     @Size(min = 5, max = 30)
+    @Pattern(regexp = "^(?!.*?[_-]{2})[A-z][A-z0-9_-]+$")
     @Column(name = "username", nullable = false, unique = true, updatable = false)
     private String username;
 
