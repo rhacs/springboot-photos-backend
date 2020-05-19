@@ -113,8 +113,9 @@ public class ErrorResponse {
      * @param violation the constraint violation
      */
     public void addError(ConstraintViolation<?> violation) {
-        addError(violation.getRootBeanClass().getSimpleName(),
-                ((PathImpl) violation.getPropertyPath()).getLeafNode().asString(), violation.getMessage(),
+        addError(((PathImpl) violation.getPropertyPath()).getLeafNode().asString(),
+                violation.getMessage(),
+                violation.getRootBeanClass().getSimpleName(),
                 violation.getInvalidValue());
     }
 
