@@ -97,7 +97,11 @@ public class PhotoController {
             throw new PhotoNotFoundException(String.format("Photo with id %d was not found", id));
         }
 
-        return new ResponseEntity<>(photo.get(), new HttpHeaders(), HttpStatus.OK);
+        Photo foundPhoto = photo.get();
+        foundPhoto.setViews(foundPhoto.getViews() + 1);
+        photoRepository.save(foundPhoto);
+
+        return new ResponseEntity<>(foundPhoto, new HttpHeaders(), HttpStatus.OK);
     }
 
     // Post Mappings
