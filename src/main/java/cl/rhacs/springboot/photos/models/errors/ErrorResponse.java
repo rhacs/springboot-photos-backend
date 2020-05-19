@@ -65,23 +65,53 @@ public class ErrorResponse {
     // Methods
     // -----------------------------------------------------------------------------------------
 
+    /**
+     * Adds a {@link DetailedError} to the error list given a field and a message
+     *
+     * @param field   name of the field affected
+     * @param message the detail message
+     */
     public void addError(String field, String message) {
         detailedErrors.add(new DetailedError(field, message));
     }
 
+    /**
+     * Adds a {@link DetailedError} to the error list given a field, a message, an
+     * object name and a rejected value
+     *
+     * @param field         name of the field affected
+     * @param message       the detail message
+     * @param objectName    the parent class of the field
+     * @param rejectedValue the rejected value
+     */
     public void addError(String field, String message, String objectName, Object rejectedValue) {
         detailedErrors.add(new DetailedError(field, message, objectName, rejectedValue));
     }
 
+    /**
+     * Adds a {@link FieldError} to the error list
+     *
+     * @param fieldError the field error
+     */
     public void addError(FieldError fieldError) {
         addError(fieldError.getField(), fieldError.getDefaultMessage(), fieldError.getObjectName(),
                 fieldError.getRejectedValue());
     }
 
+    /**
+     * Adds an {@link ObjectError} to the error list
+     *
+     * @param objectError the object error
+     */
     public void addError(ObjectError objectError) {
         addError(objectError.getObjectName(), objectError.getDefaultMessage());
     }
 
+    /**
+     * Adds a {@link ConstraintViolation} to the error list
+     *
+     * @param violation the constraint violation
+     */
     public void addError(ConstraintViolation<?> violation) {
         addError(violation.getRootBeanClass().getSimpleName(),
                 ((PathImpl) violation.getPropertyPath()).getLeafNode().asString(), violation.getMessage(),
