@@ -1,4 +1,4 @@
-package cl.rhacs.springboot.photos.exceptions;
+package cl.rhacs.springboot.photos.exceptions.handlers;
 
 import java.util.List;
 
@@ -16,27 +16,11 @@ import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.NoHandlerFoundException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
+import cl.rhacs.springboot.photos.exceptions.ContentNotFoundException;
 import cl.rhacs.springboot.photos.models.errors.ErrorResponse;
 
 @RestControllerAdvice(basePackages = { "cl.rhacs.springboot.photos" })
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
-
-    /**
-     * Handles the {@link PhotoNotFoundException} when the photo details requested
-     * by the user does not exists
-     *
-     * @param exception PhotoNotFoundException
-     * @param request   WebRequest
-     * @return ResponseEntity
-     */
-    @ExceptionHandler(value = { PhotoNotFoundException.class })
-    @ResponseStatus(code = HttpStatus.NOT_FOUND)
-    public ResponseEntity<ErrorResponse> handlePhotoNotFoundException(PhotoNotFoundException exception,
-            WebRequest request) {
-        ErrorResponse response = new ErrorResponse(HttpStatus.NOT_FOUND, exception);
-
-        return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
-    }
 
     /**
      * Handles the {@link ContentNotFoundException} when the repository is empty
