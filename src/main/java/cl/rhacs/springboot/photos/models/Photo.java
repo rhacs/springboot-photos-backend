@@ -12,6 +12,8 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.hibernate.validator.constraints.URL;
@@ -43,6 +45,10 @@ public class Photo {
     @Column(name = "url", nullable = false, unique = true)
     private String url;
 
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    @Column(columnDefinition = "bigint default 0", name = "views")
+    private Long views;
+
     @CreationTimestamp
     @Column(name = "created_at", nullable = false)
     private Date createdAt;
@@ -58,7 +64,7 @@ public class Photo {
      * Creates a new and empty {@link Photo}
      */
     public Photo() {
-
+        views = 0L;
     }
 
     /**
@@ -69,6 +75,7 @@ public class Photo {
      * @param url         the url of the image
      */
     public Photo(final String title, final String description, final String url) {
+        this();
         this.title = title;
         this.description = description;
         this.url = url;
@@ -103,6 +110,13 @@ public class Photo {
      */
     public String getUrl() {
         return url;
+    }
+
+    /**
+     * @return the views
+     */
+    public Long getViews() {
+        return views;
     }
 
     /**
@@ -141,6 +155,13 @@ public class Photo {
      */
     public void setUrl(final String url) {
         this.url = url;
+    }
+
+    /**
+     * @param views the views to set
+     */
+    public void setViews(final Long views) {
+        this.views = views;
     }
 
     // Inheritances (Object)
@@ -188,7 +209,7 @@ public class Photo {
     @Override
     public String toString() {
         return "Photo [photoId=" + photoId + ", title=" + title + ", description=" + description + ", url=" + url
-                + ", createdAt=" + createdAt + ", updatedAt=" + updatedAt + "]";
+                + ", views=" + views + ", createdAt=" + createdAt + ", updatedAt=" + updatedAt + "]";
     }
 
 }
