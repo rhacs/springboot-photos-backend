@@ -16,7 +16,7 @@ public class ContentNotFoundException extends RuntimeException {
      *
      * @param message the detail message
      */
-    public ContentNotFoundException(final String message) {
+    public ContentNotFoundException(String message) {
         super(message);
     }
 
@@ -26,7 +26,7 @@ public class ContentNotFoundException extends RuntimeException {
      *
      * @param cause the cause
      */
-    public ContentNotFoundException(final Throwable cause) {
+    public ContentNotFoundException(Throwable cause) {
         super(cause);
     }
 
@@ -37,7 +37,7 @@ public class ContentNotFoundException extends RuntimeException {
      * @param message the detail message
      * @param cause   the cause
      */
-    public ContentNotFoundException(final String message, final Throwable cause) {
+    public ContentNotFoundException(String message, Throwable cause) {
         super(message, cause);
     }
 

@@ -1,9 +1,14 @@
 package cl.rhacs.springboot.photos.exceptions;
 
+import java.util.List;
+
 import org.springframework.data.mapping.PropertyReferenceException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.FieldError;
+import org.springframework.validation.ObjectError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -26,9 +31,9 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
      */
     @ExceptionHandler(value = { PhotoNotFoundException.class })
     @ResponseStatus(code = HttpStatus.NOT_FOUND)
-    public ResponseEntity<ErrorResponse> handlePhotoNotFoundException(final PhotoNotFoundException exception,
-            final WebRequest request) {
-        final ErrorResponse response = new ErrorResponse(HttpStatus.NOT_FOUND, exception);
+    public ResponseEntity<ErrorResponse> handlePhotoNotFoundException(PhotoNotFoundException exception,
+            WebRequest request) {
+        ErrorResponse response = new ErrorResponse(HttpStatus.NOT_FOUND, exception);
 
         return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
     }
@@ -42,8 +47,8 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
      */
     @ExceptionHandler(value = { ContentNotFoundException.class })
     @ResponseStatus(code = HttpStatus.NO_CONTENT)
-    public ResponseEntity<ErrorResponse> handleContentNotFoundException(final ContentNotFoundException exception,
-            final WebRequest request) {
+    public ResponseEntity<ErrorResponse> handleContentNotFoundException(ContentNotFoundException exception,
+            WebRequest request) {
         return new ResponseEntity<>(new ErrorResponse(HttpStatus.NO_CONTENT, exception), HttpStatus.NO_CONTENT);
     }
 
@@ -58,8 +63,8 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
      */
     @ExceptionHandler(value = { IndexOutOfBoundsException.class })
     @ResponseStatus(code = HttpStatus.BAD_REQUEST)
-    public ResponseEntity<ErrorResponse> handleIndexOutOfBoundsException(final IndexOutOfBoundsException exception,
-            final WebRequest request) {
+    public ResponseEntity<ErrorResponse> handleIndexOutOfBoundsException(IndexOutOfBoundsException exception,
+            WebRequest request) {
         return new ResponseEntity<>(new ErrorResponse(HttpStatus.BAD_REQUEST, exception), HttpStatus.BAD_REQUEST);
     }
 
@@ -73,9 +78,9 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
      */
     @ExceptionHandler(value = { IllegalArgumentException.class })
     @ResponseStatus(code = HttpStatus.BAD_REQUEST)
-    public ResponseEntity<ErrorResponse> handleIllegalArgumentException(final IllegalArgumentException exception,
-            final WebRequest request) {
-        final ErrorResponse response = new ErrorResponse(HttpStatus.BAD_REQUEST, exception);
+    public ResponseEntity<ErrorResponse> handleIllegalArgumentException(IllegalArgumentException exception,
+            WebRequest request) {
+        ErrorResponse response = new ErrorResponse(HttpStatus.BAD_REQUEST, exception);
         return new ResponseEntity<>(response, new HttpHeaders(), HttpStatus.BAD_REQUEST);
     }
 
@@ -89,8 +94,8 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
      */
     @ExceptionHandler(value = { PropertyReferenceException.class })
     @ResponseStatus(code = HttpStatus.BAD_REQUEST)
-    public ResponseEntity<ErrorResponse> handlePropertyReferenceException(final PropertyReferenceException exception,
-            final WebRequest request) {
+    public ResponseEntity<ErrorResponse> handlePropertyReferenceException(PropertyReferenceException exception,
+            WebRequest request) {
         return new ResponseEntity<>(new ErrorResponse(HttpStatus.BAD_REQUEST, exception), new HttpHeaders(),
                 HttpStatus.BAD_REQUEST);
     }
@@ -110,11 +115,37 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
      */
     @Override
     @ResponseStatus(code = HttpStatus.BAD_REQUEST)
-    protected ResponseEntity<Object> handleNoHandlerFoundException(final NoHandlerFoundException exception,
-            final HttpHeaders headers, final HttpStatus status, final WebRequest request) {
-        final ErrorResponse response = new ErrorResponse(HttpStatus.BAD_REQUEST);
+    protected ResponseEntity<Object> handleNoHandlerFoundException(NoHandlerFoundException exception,
+            HttpHeaders headers, HttpStatus status, WebRequest request) {
+        ErrorResponse response = new ErrorResponse(HttpStatus.BAD_REQUEST);
         response.setMessage(String.format("Could not find the method %s for the URL %s", exception.getHttpMethod(),
                 exception.getRequestURL()));
+
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    }
+
+    /**
+     * Handles {@link MethodArgumentNotValidException}. Triggered when an object
+     * fails {@link javax.validation.Valid} validation.
+     *
+     * @param ex      MethodArgumentNotValidException
+     * @param headers HttpHeaders
+     * @param status  HttpStatus
+     * @param request WebRequest
+     * @return ResponseEntity instance
+     */
+    @Override
+    @ResponseStatus(code = HttpStatus.BAD_REQUEST)
+    protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex,
+            HttpHeaders headers, HttpStatus status, WebRequest request) {
+        ErrorResponse response = new ErrorResponse(HttpStatus.BAD_REQUEST);
+        response.setMessage("Validation error");
+
+        List<FieldError> fieldErrors = ex.getBindingResult().getFieldErrors();
+        fieldErrors.forEach(fieldError -> response.addError(fieldError));
+
+        List<ObjectError> objectErrors = ex.getBindingResult().getGlobalErrors();
+        objectErrors.forEach(objectError -> response.addError(objectError));
 
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }

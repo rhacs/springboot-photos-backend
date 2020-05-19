@@ -24,7 +24,7 @@ public class PhotoNotFoundException extends RuntimeException {
      *
      * @param message the detail message
      */
-    public PhotoNotFoundException(final String message) {
+    public PhotoNotFoundException(String message) {
         super(message);
     }
 
@@ -34,7 +34,7 @@ public class PhotoNotFoundException extends RuntimeException {
      *
      * @param cause the cause
      */
-    public PhotoNotFoundException(final Throwable cause) {
+    public PhotoNotFoundException(Throwable cause) {
         super(cause);
     }
 
@@ -45,7 +45,7 @@ public class PhotoNotFoundException extends RuntimeException {
      * @param message the detail message
      * @param cause   the cause
      */
-    public PhotoNotFoundException(final String message, final Throwable cause) {
+    public PhotoNotFoundException(String message, Throwable cause) {
         super(message, cause);
     }
 

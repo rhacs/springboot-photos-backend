@@ -29,7 +29,7 @@ public class DetailedError {
      * @param field   field name
      * @param message detail message
      */
-    public DetailedError(final String field, final String message) {
+    public DetailedError(String field, String message) {
         this.field = field;
         this.message = message;
     }
@@ -43,8 +43,7 @@ public class DetailedError {
      * @param objectName    the object name
      * @param rejectedValue the rejected value
      */
-    public DetailedError(final String field, final String message, final String objectName,
-            final Object rejectedValue) {
+    public DetailedError(String field, String message, String objectName, Object rejectedValue) {
         this(field, message);
         this.objectName = objectName;
         this.rejectedValue = rejectedValue;
@@ -87,28 +86,28 @@ public class DetailedError {
     /**
      * @param field the field to set
      */
-    public void setField(final String field) {
+    public void setField(String field) {
         this.field = field;
     }
 
     /**
      * @param message the message to set
      */
-    public void setMessage(final String message) {
+    public void setMessage(String message) {
         this.message = message;
     }
 
     /**
      * @param objectName the objectName to set
      */
-    public void setObjectName(final String objectName) {
+    public void setObjectName(String objectName) {
         this.objectName = objectName;
     }
 
     /**
      * @param rejectedValue the rejectedValue to set
      */
-    public void setRejectedValue(final Object rejectedValue) {
+    public void setRejectedValue(Object rejectedValue) {
         this.rejectedValue = rejectedValue;
     }
 
@@ -117,7 +116,7 @@ public class DetailedError {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
+        int prime = 31;
         int result = 1;
 
         result = prime * result + ((field == null) ? 0 : field.hashCode());
@@ -129,8 +128,8 @@ public class DetailedError {
     }
 
     @Override
-    public boolean equals(final Object obj) {
-        final DetailedError other = (DetailedError) obj;
+    public boolean equals(Object obj) {
+        DetailedError other = (DetailedError) obj;
 
         if (this == obj)
             return true;

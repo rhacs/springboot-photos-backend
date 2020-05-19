@@ -17,7 +17,7 @@ public interface PhotoRepository extends JpaRepository<Photo, Long> {
      * @param title the title to look for
      * @return a list of possible candidates
      */
-    public List<Photo> findByTitle(final String title);
+    public List<Photo> findByTitle(String title);
 
     /**
      * Searches the repository using the photo url
@@ -25,6 +25,6 @@ public interface PhotoRepository extends JpaRepository<Photo, Long> {
      * @param url the url to look for
      * @return the photo details
      */
-    public Optional<Photo> findByUrl(final String url);
+    public Optional<Photo> findByUrl(String url);
 
 }

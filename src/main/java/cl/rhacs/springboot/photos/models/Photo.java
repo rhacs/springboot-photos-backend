@@ -25,6 +25,7 @@ public class Photo {
     // Attributes
     // -----------------------------------------------------------------------------------------
 
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "photo_id")
@@ -42,17 +43,19 @@ public class Photo {
     @NotNull
     @NotBlank
     @URL
-    @Column(name = "url", nullable = false, unique = true)
+    @Column(name = "url", nullable = false, unique = true, updatable = false)
     private String url;
 
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     @Column(columnDefinition = "bigint default 0", name = "views")
     private Long views;
 
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     @CreationTimestamp
     @Column(name = "created_at", nullable = false)
     private Date createdAt;
 
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     @UpdateTimestamp
     @Column(name = "updated_at", nullable = false)
     private Date updatedAt;

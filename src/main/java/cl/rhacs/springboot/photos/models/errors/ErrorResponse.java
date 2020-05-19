@@ -19,11 +19,11 @@ public class ErrorResponse {
     // Attributes
     // -----------------------------------------------------------------------------------------
 
-    private final Date timestamp;
+    private Date timestamp;
     private HttpStatus httpStatus;
     private int httpStatusCode;
     private String message;
-    private final Set<DetailedError> detailedErrors;
+    private Set<DetailedError> detailedErrors;
 
     // Constructors
     // -----------------------------------------------------------------------------------------
@@ -42,7 +42,7 @@ public class ErrorResponse {
      *
      * @param status the Http Status
      */
-    public ErrorResponse(final HttpStatus status) {
+    public ErrorResponse(HttpStatus status) {
         this();
         this.httpStatus = status;
         this.httpStatusCode = status.value();
@@ -55,7 +55,7 @@ public class ErrorResponse {
      * @param status    the Http Status
      * @param exception the Exception
      */
-    public ErrorResponse(final HttpStatus status, final Exception exception) {
+    public ErrorResponse(HttpStatus status, Exception exception) {
         this(status);
 
         this.message = (exception.getLocalizedMessage() == null) ? exception.getMessage()
@@ -65,25 +65,24 @@ public class ErrorResponse {
     // Methods
     // -----------------------------------------------------------------------------------------
 
-    public void addError(final String field, final String message) {
+    public void addError(String field, String message) {
         detailedErrors.add(new DetailedError(field, message));
     }
 
-    public void addError(final String field, final String message, final String objectName,
-            final Object rejectedValue) {
+    public void addError(String field, String message, String objectName, Object rejectedValue) {
         detailedErrors.add(new DetailedError(field, message, objectName, rejectedValue));
     }
 
-    public void addError(final FieldError fieldError) {
+    public void addError(FieldError fieldError) {
         addError(fieldError.getField(), fieldError.getDefaultMessage(), fieldError.getObjectName(),
                 fieldError.getRejectedValue());
     }
 
-    public void addError(final ObjectError objectError) {
+    public void addError(ObjectError objectError) {
         addError(objectError.getObjectName(), objectError.getDefaultMessage());
     }
 
-    public void addError(final ConstraintViolation<?> violation) {
+    public void addError(ConstraintViolation<?> violation) {
         addError(violation.getRootBeanClass().getSimpleName(),
                 ((PathImpl) violation.getPropertyPath()).getLeafNode().asString(), violation.getMessage(),
                 violation.getInvalidValue());
@@ -133,21 +132,21 @@ public class ErrorResponse {
     /**
      * @param httpStatus the httpStatus to set
      */
-    public void setHttpStatus(final HttpStatus httpStatus) {
+    public void setHttpStatus(HttpStatus httpStatus) {
         this.httpStatus = httpStatus;
     }
 
     /**
      * @param httpStatusCode the httpStatusCode to set
      */
-    public void setHttpStatusCode(final int httpStatusCode) {
+    public void setHttpStatusCode(int httpStatusCode) {
         this.httpStatusCode = httpStatusCode;
     }
 
     /**
      * @param message the message to set
      */
-    public void setMessage(final String message) {
+    public void setMessage(String message) {
         this.message = message;
     }
 
