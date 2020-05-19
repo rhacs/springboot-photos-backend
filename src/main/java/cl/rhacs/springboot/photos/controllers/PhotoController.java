@@ -1,10 +1,10 @@
 package cl.rhacs.springboot.photos.controllers;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 import javax.validation.Valid;
 
@@ -13,12 +13,13 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -58,10 +59,9 @@ public class PhotoController {
      */
     @GetMapping
     @ResponseStatus(code = HttpStatus.OK)
-    public ResponseEntity<Map<String, Object>> getAllPhotos(@RequestParam(defaultValue = "0") final int page,
-            @RequestParam(defaultValue = "10") final int size,
-            @RequestParam(defaultValue = "photoId") final String sortBy,
-            @RequestParam(defaultValue = "asc") final String sortOrder)
+    public ResponseEntity<Map<String, Object>> getAllPhotos(@RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size, @RequestParam(defaultValue = "photoId") String sortBy,
+            @RequestParam(defaultValue = "asc") String sortOrder)
             throws ContentNotFoundException, IndexOutOfBoundsException, IllegalArgumentException {
         List<Photo> photos = new ArrayList<>();
         Sort sort = Sort.by(sortBy);
@@ -74,8 +74,8 @@ public class PhotoController {
             sort = sort.descending();
         }
 
-        final Pageable pageable = PageRequest.of(page, size, sort);
-        final Page<Photo> pagePhotos = photoRepository.findAll(pageable);
+        Pageable pageable = PageRequest.of(page, size, sort);
+        Page<Photo> pagePhotos = photoRepository.findAll(pageable);
         photos = pagePhotos.getContent();
 
         if (page > pagePhotos.getTotalPages() - 1) {
@@ -87,13 +87,13 @@ public class PhotoController {
             throw new ContentNotFoundException("The repository is empty");
         }
 
-        final Map<String, Object> response = new HashMap<>();
+        Map<String, Object> response = new HashMap<>();
         response.put("photos", photos);
         response.put("currentPage", pagePhotos.getNumber());
         response.put("totalItems", pagePhotos.getTotalElements());
         response.put("totalPages", pagePhotos.getTotalPages());
 
-        return new ResponseEntity<>(response, new HttpHeaders(), HttpStatus.OK);
+        return ResponseEntity.ok(response);
     }
 
     /**
@@ -104,18 +104,14 @@ public class PhotoController {
      * @throws PhotoNotFoundException when the photo does not exists
      */
     @GetMapping(path = "/{id:^\\d+$}")
-    public ResponseEntity<Photo> findPhotoById(@PathVariable final Long id) throws PhotoNotFoundException {
-        final Optional<Photo> photo = photoRepository.findById(id);
+    @ResponseStatus(code = HttpStatus.OK)
+    public ResponseEntity<Photo> findPhotoById(@PathVariable Long id) throws PhotoNotFoundException {
+        Photo photo = photoRepository.findById(id)
+                .orElseThrow(() -> new PhotoNotFoundException("Photo not found for this id :: " + id));
+        photo.setViews(photo.getViews() + 1);
+        photoRepository.save(photo);
 
-        if (!photo.isPresent()) {
-            throw new PhotoNotFoundException(String.format("Photo with id %d was not found", id));
-        }
-
-        final Photo foundPhoto = photo.get();
-        foundPhoto.setViews(foundPhoto.getViews() + 1);
-        photoRepository.save(foundPhoto);
-
-        return new ResponseEntity<>(foundPhoto, new HttpHeaders(), HttpStatus.OK);
+        return ResponseEntity.ok(photo);
     }
 
     // Post Mappings
@@ -129,24 +125,54 @@ public class PhotoController {
      */
     @PostMapping
     @ResponseStatus(code = HttpStatus.CREATED)
-    public ResponseEntity<Photo> addPhoto(@RequestBody @Valid final Photo photo) {
-        final Photo savedPhoto = photoRepository.save(photo);
-        return new ResponseEntity<>(savedPhoto, new HttpHeaders(), HttpStatus.CREATED);
+    public ResponseEntity<Photo> addPhoto(@RequestBody @Valid Photo photo) {
+        Photo savedPhoto = photoRepository.save(photo);
+        return ResponseEntity.status(HttpStatus.CREATED).body(savedPhoto);
     }
 
     // Put Mappings
     // -----------------------------------------------------------------------------------------
 
-    // TODO
+    /**
+     * Update the information (title, description) of an existing {@link Photo}
+     *
+     * @param id           the photo id
+     * @param photoDetails the new details
+     * @return the photo information with the changed values
+     * @throws PhotoNotFoundException when the photo is not found on the repository
+     */
+    @PutMapping(path = "/{id:^\\d+$}")
+    @ResponseStatus(code = HttpStatus.OK)
+    public ResponseEntity<Photo> updatePhoto(@PathVariable Long id, @RequestBody @Valid Photo photoDetails)
+            throws PhotoNotFoundException {
+        Photo photo = photoRepository.findById(id)
+                .orElseThrow(() -> new PhotoNotFoundException("Photo not found for this id :: " + id));
+        photo.setTitle(photoDetails.getTitle());
+        photo.setDescription(photoDetails.getDescription());
+        Photo updatedPhoto = photoRepository.save(photo);
 
-    // Patch Mappings
-    // -----------------------------------------------------------------------------------------
-
-    // TODO
+        return ResponseEntity.ok(updatedPhoto);
+    }
 
     // Delete Mappings
     // -----------------------------------------------------------------------------------------
 
-    // TODO
+    @DeleteMapping(path = "/{id:^\\d+$}")
+    @ResponseStatus(code = HttpStatus.OK)
+    public ResponseEntity<Map<String, Object>> deletePhoto(@PathVariable Long id) throws PhotoNotFoundException {
+        Photo photo = photoRepository.findById(id)
+                .orElseThrow(() -> new PhotoNotFoundException("Photo not found for this id :: " + id));
+        photoRepository.delete(photo);
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("timestamp", new Date());
+        response.put("photo", photo);
+
+        Map<String, Boolean> deleted = new HashMap<>();
+        deleted.put("deleted", Boolean.TRUE);
+        response.put("status", deleted);
+
+        return ResponseEntity.ok(response);
+    }
 
 }
