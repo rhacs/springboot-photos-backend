@@ -48,16 +48,16 @@ public class User {
     @Column(name = "email", nullable = false, unique = true)
     private String email;
 
-    @JsonIgnore
-    @OneToMany(cascade = { CascadeType.ALL }, fetch = FetchType.LAZY, mappedBy = "user", targetEntity = Photo.class)
-    private Set<Photo> photos;
-
-    @JsonIgnore
     @NotNull
     @NotBlank
     @NotEmpty
     @Column(name = "password", nullable = false)
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
+
+    @JsonIgnore
+    @OneToMany(cascade = { CascadeType.ALL }, fetch = FetchType.LAZY, mappedBy = "user", targetEntity = Photo.class)
+    private Set<Photo> photos;
 
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private Date createdAt;
