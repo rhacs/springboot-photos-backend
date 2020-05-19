@@ -1,5 +1,6 @@
 package cl.rhacs.springboot.photos.exceptions;
 
+import org.springframework.data.mapping.PropertyReferenceException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -47,7 +48,9 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     /**
-     * Handles the {@link IndexOutOfBoundsException}
+     * Handles the {@link IndexOutOfBoundsException}. Thrown to indicate that an
+     * index of some sort (such as to an array, to a string, or to a vector) is out
+     * of range.
      *
      * @param exception IndexOutOfBoundsException
      * @param request   WebRequest
@@ -60,6 +63,14 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(new ErrorResponse(HttpStatus.BAD_REQUEST, exception), HttpStatus.BAD_REQUEST);
     }
 
+    /**
+     * Handles the {@link IllegalArgumentException}. Thrown to indicate that a
+     * method has been passed an illegal or inappropriate argument.
+     *
+     * @param exception IllegalArgumentException
+     * @param request   WebRequest
+     * @return ResponseEntity
+     */
     @ExceptionHandler(value = { IllegalArgumentException.class })
     @ResponseStatus(code = HttpStatus.BAD_REQUEST)
     public ResponseEntity<ErrorResponse> handleIllegalArgumentException(final IllegalArgumentException exception,
@@ -67,6 +78,25 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         final ErrorResponse response = new ErrorResponse(HttpStatus.BAD_REQUEST, exception);
         return new ResponseEntity<>(response, new HttpHeaders(), HttpStatus.BAD_REQUEST);
     }
+
+    /**
+     * Handles the {@link PropertyReferenceException}. Exception being thrown when
+     * creating PropertyPath instances.
+     *
+     * @param exception PropertyReferenceException
+     * @param request   WebRequest
+     * @return ResponseEntity
+     */
+    @ExceptionHandler(value = { PropertyReferenceException.class })
+    @ResponseStatus(code = HttpStatus.BAD_REQUEST)
+    public ResponseEntity<ErrorResponse> handlePropertyReferenceException(final PropertyReferenceException exception,
+            final WebRequest request) {
+        return new ResponseEntity<>(new ErrorResponse(HttpStatus.BAD_REQUEST, exception), new HttpHeaders(),
+                HttpStatus.BAD_REQUEST);
+    }
+
+    // Inheritances (ResponseEntityExceptionHandler)
+    // -----------------------------------------------------------------------------------------
 
     /**
      * Handles the {@link NoHandlerFoundException} when the user tries to access a

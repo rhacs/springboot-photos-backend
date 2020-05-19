@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -53,15 +54,28 @@ public class PhotoController {
      * @throws ContentNotFoundException  when the repository is empty
      * @throws IndexOutOfBoundsException when the user enters a page value larger
      *                                   than the max value
+     * @throws IllegalArgumentException  when an unkown sorting order is selected
      */
     @GetMapping
     @ResponseStatus(code = HttpStatus.OK)
-    public ResponseEntity<Map<String, Object>> getAllPhotos(@RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size) throws ContentNotFoundException, IndexOutOfBoundsException {
+    public ResponseEntity<Map<String, Object>> getAllPhotos(@RequestParam(defaultValue = "0") final int page,
+            @RequestParam(defaultValue = "10") final int size,
+            @RequestParam(defaultValue = "photoId") final String sortBy,
+            @RequestParam(defaultValue = "asc") final String sortOrder)
+            throws ContentNotFoundException, IndexOutOfBoundsException, IllegalArgumentException {
         List<Photo> photos = new ArrayList<>();
-        Pageable pageable = PageRequest.of(page, size);
+        Sort sort = Sort.by(sortBy);
 
-        Page<Photo> pagePhotos = photoRepository.findAll(pageable);
+        if (!sortOrder.equals("asc") && !sortOrder.equals("desc")) {
+            throw new IllegalArgumentException(String.format(
+                    "'%s' is an unknown sorting order. Possible values: 'asc' for ascending order and 'desc' for descending order.",
+                    sortOrder));
+        } else if (sortOrder.equals("desc")) {
+            sort = sort.descending();
+        }
+
+        final Pageable pageable = PageRequest.of(page, size, sort);
+        final Page<Photo> pagePhotos = photoRepository.findAll(pageable);
         photos = pagePhotos.getContent();
 
         if (page > pagePhotos.getTotalPages() - 1) {
@@ -73,7 +87,7 @@ public class PhotoController {
             throw new ContentNotFoundException("The repository is empty");
         }
 
-        Map<String, Object> response = new HashMap<>();
+        final Map<String, Object> response = new HashMap<>();
         response.put("photos", photos);
         response.put("currentPage", pagePhotos.getNumber());
         response.put("totalItems", pagePhotos.getTotalElements());
@@ -97,7 +111,7 @@ public class PhotoController {
             throw new PhotoNotFoundException(String.format("Photo with id %d was not found", id));
         }
 
-        Photo foundPhoto = photo.get();
+        final Photo foundPhoto = photo.get();
         foundPhoto.setViews(foundPhoto.getViews() + 1);
         photoRepository.save(foundPhoto);
 
