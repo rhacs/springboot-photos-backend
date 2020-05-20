@@ -14,7 +14,6 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
@@ -37,7 +36,6 @@ public class User {
 
     @NotNull
     @NotBlank
-    @NotEmpty
     @Size(min = 5, max = 30)
     @Pattern(regexp = "^(?!.*?[_-]{2})[A-z][A-z0-9_-]+$")
     @Column(name = "username", nullable = false, unique = true, updatable = false)
@@ -45,18 +43,20 @@ public class User {
 
     @NotNull
     @NotBlank
-    @NotEmpty
     @Email
     @Column(name = "email", nullable = false, unique = true)
     private String email;
 
     @NotNull
     @NotBlank
-    @NotEmpty
     @Column(name = "password", nullable = false)
     @Size(min = 8)
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
+
+    @Size(min = 10)
+    @Column(columnDefinition = "tinytext default null", name = "biography")
+    private String biography;
 
     @JsonIgnore
     @OneToMany(cascade = { CascadeType.ALL }, fetch = FetchType.LAZY, mappedBy = "user", targetEntity = Photo.class)
@@ -123,6 +123,13 @@ public class User {
     }
 
     /**
+     * @return the biography
+     */
+    public String getBiography() {
+        return biography;
+    }
+
+    /**
      * @return the photos
      */
     public Set<Photo> getPhotos() {
@@ -147,6 +154,13 @@ public class User {
     }
 
     /**
+     * @param biography the biography to set
+     */
+    public void setBiography(String biography) {
+        this.biography = biography;
+    }
+
+    /**
      * @param photos the photos to set
      */
     public void setPhotos(Set<Photo> photos) {
@@ -158,8 +172,8 @@ public class User {
 
     @Override
     public String toString() {
-        return "User [userId= " + userId + ", username=" + username + ", email=" + email + ", photos=" + photos
-                + ", createdAt=" + createdAt + ", updatedAt=" + updatedAt + "]";
+        return "User [userId= " + userId + ", username=" + username + ", email=" + email + ", biography=" + biography
+                + ", photos=" + photos + ", createdAt=" + createdAt + ", updatedAt=" + updatedAt + "]";
     }
 
 }
