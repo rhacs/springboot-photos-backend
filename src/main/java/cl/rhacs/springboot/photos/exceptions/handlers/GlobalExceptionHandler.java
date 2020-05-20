@@ -8,6 +8,7 @@ import org.springframework.data.mapping.PropertyReferenceException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindException;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -141,6 +142,17 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
         List<ObjectError> objectErrors = ex.getBindingResult().getGlobalErrors();
         objectErrors.forEach(objectError -> response.addError(objectError));
+
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    }
+
+    @Override
+    @ResponseStatus(code = HttpStatus.BAD_REQUEST)
+    protected ResponseEntity<Object> handleBindException(BindException ex, HttpHeaders headers, HttpStatus status,
+            WebRequest request) {
+        ErrorResponse response = new ErrorResponse(status);
+        response.setMessage("Bind exception");
+        ex.getAllErrors().forEach(error -> response.addError(error));
 
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
