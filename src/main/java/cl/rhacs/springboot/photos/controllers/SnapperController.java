@@ -71,7 +71,7 @@ public class SnapperController {
      */
     @PostMapping
     @ResponseStatus(code = HttpStatus.CREATED)
-    public ResponseEntity<Snapper> addSnapper(@RequestBody Snapper snapper) {
+    public ResponseEntity<Snapper> addSnapper(@RequestBody @Valid Snapper snapper) {
         Snapper savedSnapper = snapperRepository.save(snapper);
         return ResponseEntity.status(HttpStatus.CREATED).body(savedSnapper);
     }
