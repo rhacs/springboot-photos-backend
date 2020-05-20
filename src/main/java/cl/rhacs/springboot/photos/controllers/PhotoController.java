@@ -28,6 +28,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import cl.rhacs.springboot.photos.exceptions.ContentNotFoundException;
 import cl.rhacs.springboot.photos.exceptions.PhotoNotFoundException;
+import cl.rhacs.springboot.photos.models.PageableResponse;
 import cl.rhacs.springboot.photos.models.Photo;
 import cl.rhacs.springboot.photos.repositories.PhotoRepository;
 
@@ -59,7 +60,7 @@ public class PhotoController {
      */
     @GetMapping
     @ResponseStatus(code = HttpStatus.OK)
-    public ResponseEntity<Map<String, Object>> getAllPhotos(@RequestParam(defaultValue = "0") int page,
+    public ResponseEntity<PageableResponse> getAllPhotos(@RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size, @RequestParam(defaultValue = "photoId") String sortBy,
             @RequestParam(defaultValue = "asc") String sortOrder)
             throws ContentNotFoundException, IndexOutOfBoundsException, IllegalArgumentException {
@@ -87,11 +88,8 @@ public class PhotoController {
             throw new ContentNotFoundException("The repository is empty");
         }
 
-        Map<String, Object> response = new HashMap<>();
-        response.put("photos", photos);
-        response.put("currentPage", pagePhotos.getNumber());
-        response.put("totalItems", pagePhotos.getTotalElements());
-        response.put("totalPages", pagePhotos.getTotalPages());
+        PageableResponse response = new PageableResponse(pagePhotos.getNumber(), pagePhotos.getTotalPages(),
+                pagePhotos.getNumberOfElements(), pagePhotos.getTotalElements(), photos);
 
         return ResponseEntity.ok(response);
     }
