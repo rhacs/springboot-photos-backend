@@ -63,7 +63,7 @@ public class UserController {
     // -----------------------------------------------------------------------------------------
 
     /**
-     * Adds an {@link User} to the repository
+     * Adds a {@link User} to the repository
      *
      * @param userDetails the {@code User} details
      * @return a {@code ResponseEntity} instance with the created {@code User}
