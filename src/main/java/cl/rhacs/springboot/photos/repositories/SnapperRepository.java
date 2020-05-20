@@ -5,10 +5,10 @@ import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import cl.rhacs.springboot.photos.models.User;
+import cl.rhacs.springboot.photos.models.Snapper;
 
 @Repository
-public interface UserRepository extends JpaRepository<User, Long> {
+public interface SnapperRepository extends JpaRepository<Snapper, Long> {
 
     /**
      * Searches the repository for the specified email address
@@ -16,7 +16,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
      * @param email the email address to find
      * @return the user details if exists
      */
-    public Optional<User> findByEmail(String email);
+    public Optional<Snapper> findByEmail(String email);
 
     /**
      * Searches the repository for the specified username
@@ -24,6 +24,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
      * @param username the username to find
      * @return the user details if exists
      */
-    public Optional<User> findByUsername(String username);
+    public Optional<Snapper> findByUsername(String username);
 
 }

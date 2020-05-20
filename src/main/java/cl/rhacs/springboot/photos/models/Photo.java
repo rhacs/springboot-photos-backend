@@ -57,9 +57,9 @@ public class Photo {
 
     @JsonIgnore
     @ManyToOne(cascade = { CascadeType.MERGE, CascadeType.PERSIST,
-            CascadeType.REFRESH }, fetch = FetchType.LAZY, targetEntity = User.class)
+            CascadeType.REFRESH }, fetch = FetchType.LAZY, targetEntity = Snapper.class)
     @JoinColumn(name = "user_id", nullable = false, updatable = false)
-    private User user;
+    private Snapper snapper;
 
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     @CreationTimestamp
@@ -134,10 +134,10 @@ public class Photo {
     }
 
     /**
-     * @return the user
+     * @return the snapper
      */
-    public User getUser() {
-        return user;
+    public Snapper getUser() {
+        return snapper;
     }
 
     /**

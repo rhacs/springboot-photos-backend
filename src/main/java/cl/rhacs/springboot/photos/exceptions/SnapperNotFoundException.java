@@ -1,6 +1,6 @@
 package cl.rhacs.springboot.photos.exceptions;
 
-public class UserNotFoundException extends RuntimeException {
+public class SnapperNotFoundException extends RuntimeException {
 
     private static final long serialVersionUID = 1L;
 
@@ -9,7 +9,7 @@ public class UserNotFoundException extends RuntimeException {
      *
      * @param message the detail message
      */
-    public UserNotFoundException(String message) {
+    public SnapperNotFoundException(String message) {
         super(message);
     }
 

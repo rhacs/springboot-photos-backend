@@ -22,17 +22,17 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 @Entity
-@Table(name = "users")
-public class User {
+@Table(name = "snappers")
+public class Snapper {
 
     // Attributes
     // -----------------------------------------------------------------------------------------
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "user_id")
+    @Column(name = "snapper_id")
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-    private Long userId;
+    private Long snapperId;
 
     @NotNull
     @NotBlank
@@ -72,20 +72,21 @@ public class User {
     // -----------------------------------------------------------------------------------------
 
     /**
-     * Creates a new and empty {@link User}
+     * Creates a new and empty {@link Snapper}
      */
-    public User() {
+    public Snapper() {
 
     }
 
     /**
-     * Creates a new {@link User} given a username, an email address and a password
+     * Creates a new {@link Snapper} given a username, an email address and a
+     * password
      *
      * @param username the username to set
      * @param email    the email address
      * @param password the password
      */
-    public User(String username, String email, String password) {
+    public Snapper(String username, String email, String password) {
         this.username = username;
         this.email = email;
         this.password = password;
@@ -95,10 +96,10 @@ public class User {
     // -----------------------------------------------------------------------------------------
 
     /**
-     * @return the userId
+     * @return the snapperId
      */
-    public Long getUserId() {
-        return userId;
+    public Long getSnapperId() {
+        return snapperId;
     }
 
     /**
@@ -172,8 +173,8 @@ public class User {
 
     @Override
     public String toString() {
-        return "User [userId= " + userId + ", username=" + username + ", email=" + email + ", biography=" + biography
-                + ", photos=" + photos + ", createdAt=" + createdAt + ", updatedAt=" + updatedAt + "]";
+        return "Snapper [snapperId= " + snapperId + ", username=" + username + ", email=" + email + ", biography="
+                + biography + ", photos=" + photos + ", createdAt=" + createdAt + ", updatedAt=" + updatedAt + "]";
     }
 
 }
