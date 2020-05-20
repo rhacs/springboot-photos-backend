@@ -58,7 +58,7 @@ public class Photo {
     @JsonIgnore
     @ManyToOne(cascade = { CascadeType.MERGE, CascadeType.PERSIST,
             CascadeType.REFRESH }, fetch = FetchType.LAZY, targetEntity = Snapper.class)
-    @JoinColumn(name = "user_id", nullable = false, updatable = false)
+    @JoinColumn(name = "snapper_id", nullable = false, updatable = false)
     private Snapper snapper;
 
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)

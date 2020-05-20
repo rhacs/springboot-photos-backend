@@ -59,7 +59,7 @@ public class Snapper {
     private String biography;
 
     @JsonIgnore
-    @OneToMany(cascade = { CascadeType.ALL }, fetch = FetchType.LAZY, mappedBy = "user", targetEntity = Photo.class)
+    @OneToMany(cascade = { CascadeType.ALL }, fetch = FetchType.LAZY, mappedBy = "snapper", targetEntity = Photo.class)
     private Set<Photo> photos;
 
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
