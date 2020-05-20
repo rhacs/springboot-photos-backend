@@ -2,6 +2,8 @@ package cl.rhacs.springboot.photos.exceptions.handlers;
 
 import java.util.List;
 
+import javax.validation.ConstraintViolationException;
+
 import org.springframework.data.mapping.PropertyReferenceException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -26,13 +28,11 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
      * Handles the {@link ContentNotFoundException} when the repository is empty
      *
      * @param exception ContentNotFoundException
-     * @param request   WebRequest
      * @return ResponseEntity
      */
     @ExceptionHandler(value = { ContentNotFoundException.class })
     @ResponseStatus(code = HttpStatus.NO_CONTENT)
-    public ResponseEntity<ErrorResponse> handleContentNotFoundException(ContentNotFoundException exception,
-            WebRequest request) {
+    protected ResponseEntity<ErrorResponse> handleContentNotFoundException(ContentNotFoundException exception) {
         return new ResponseEntity<>(new ErrorResponse(HttpStatus.NO_CONTENT, exception), HttpStatus.NO_CONTENT);
     }
 
@@ -42,13 +42,11 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
      * of range.
      *
      * @param exception IndexOutOfBoundsException
-     * @param request   WebRequest
      * @return ResponseEntity
      */
     @ExceptionHandler(value = { IndexOutOfBoundsException.class })
     @ResponseStatus(code = HttpStatus.BAD_REQUEST)
-    public ResponseEntity<ErrorResponse> handleIndexOutOfBoundsException(IndexOutOfBoundsException exception,
-            WebRequest request) {
+    protected ResponseEntity<ErrorResponse> handleIndexOutOfBoundsException(IndexOutOfBoundsException exception) {
         return new ResponseEntity<>(new ErrorResponse(HttpStatus.BAD_REQUEST, exception), HttpStatus.BAD_REQUEST);
     }
 
@@ -57,13 +55,11 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
      * method has been passed an illegal or inappropriate argument.
      *
      * @param exception IllegalArgumentException
-     * @param request   WebRequest
      * @return ResponseEntity
      */
     @ExceptionHandler(value = { IllegalArgumentException.class })
     @ResponseStatus(code = HttpStatus.BAD_REQUEST)
-    public ResponseEntity<ErrorResponse> handleIllegalArgumentException(IllegalArgumentException exception,
-            WebRequest request) {
+    protected ResponseEntity<ErrorResponse> handleIllegalArgumentException(IllegalArgumentException exception) {
         ErrorResponse response = new ErrorResponse(HttpStatus.BAD_REQUEST, exception);
         return new ResponseEntity<>(response, new HttpHeaders(), HttpStatus.BAD_REQUEST);
     }
@@ -73,15 +69,30 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
      * creating PropertyPath instances.
      *
      * @param exception PropertyReferenceException
-     * @param request   WebRequest
      * @return ResponseEntity
      */
     @ExceptionHandler(value = { PropertyReferenceException.class })
     @ResponseStatus(code = HttpStatus.BAD_REQUEST)
-    public ResponseEntity<ErrorResponse> handlePropertyReferenceException(PropertyReferenceException exception,
-            WebRequest request) {
+    protected ResponseEntity<ErrorResponse> handlePropertyReferenceException(PropertyReferenceException exception) {
         return new ResponseEntity<>(new ErrorResponse(HttpStatus.BAD_REQUEST, exception), new HttpHeaders(),
                 HttpStatus.BAD_REQUEST);
+    }
+
+    /**
+     * Handles the {@link ConstraintViolationException} thrown when validating
+     * fields of a class
+     *
+     * @param exception the {@code ConstraintViolationException}
+     * @return a {@code ResponseEntity} instance with the detailed error
+     */
+    @ExceptionHandler(value = { ConstraintViolationException.class })
+    @ResponseStatus(code = HttpStatus.BAD_REQUEST)
+    protected ResponseEntity<ErrorResponse> handleConstraintViolationException(ConstraintViolationException exception) {
+        ErrorResponse response = new ErrorResponse(HttpStatus.BAD_REQUEST);
+        response.setMessage("Constraint Violation (Validation error)");
+        exception.getConstraintViolations().forEach(violation -> response.addError(violation));
+
+        return new ResponseEntity<>(response, new HttpHeaders(), response.getHttpStatus());
     }
 
     // Inheritances (ResponseEntityExceptionHandler)
