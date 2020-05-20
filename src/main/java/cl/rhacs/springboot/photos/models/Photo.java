@@ -58,7 +58,7 @@ public class Photo {
     @JsonIgnore
     @ManyToOne(cascade = { CascadeType.MERGE, CascadeType.PERSIST,
             CascadeType.REFRESH }, fetch = FetchType.LAZY, targetEntity = User.class)
-    @JoinColumn(name = "user_id", nullable = false, referencedColumnName = "user_id", updatable = false)
+    @JoinColumn(name = "user_id", nullable = false, updatable = false)
     private User user;
 
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
